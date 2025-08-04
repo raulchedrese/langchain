@@ -43,7 +43,8 @@ defmodule LangChain.MixProject do
       {:abacus, "~> 2.1.0", optional: true},
       {:nx, ">= 0.7.0", optional: true},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
-      {:mimic, "~> 1.8", only: :test}
+      {:mimic, "~> 1.8", only: :test},
+      {:hnswlib, "~> 0.1.0"}
     ]
   end
 

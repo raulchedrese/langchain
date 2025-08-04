@@ -1,0 +1,42 @@
+# RAG Tutorial
+
+```elixir
+Mix.install([
+  {:kino, "~> 0.16.0"},
+  {:langchain, path: "#{__DIR__}/../"}
+])
+```
+
+## Intro
+
+RAG applications have a few distinct steps. First documents need to be ingested. Those documents are then turned into vector embeddings. **Both** the vector embeddings and their corresponding documents are stored, possibly in different places.
+
+In LangChain ingested documents are represented by `LangChain.Document`. Documents can then be stored in one of the "vector stores" in `LangChain.VectorStores`. Typically vector stores handle converting the documents into embeddings and storeing both the documents and embeddings. Vector stores can use any of the models in `LangChain.Embeddings` to generate the vector embeddings.
+
+Once you have added documents to a vector store you can use the `similarity_search(query)` function provided by each vector store to search of documents that match your text query. The vector store will handle converting your text query into an embedding, searching the underlying vector index, and returning the documents that correspond to the found vectors.
+
+## Quickstart
+
+```elixir
+Application.put_env(:langchain, :openai_key, System.fetch_env!("LB_OPENAI_API_KEY"))
+alias LangChain.Document
+
+document_1 = Document.new("Hello World!", %{ id: 1 })
+document_2 = Document.new("Foobar", %{ id: 2 })
+```
+
+```elixir
+alias LangChain.VectorStores.HNSWVectorStore
+alias LangChain.Embeddings.OpenAIEmbeddings
+vector_store = LangChain.VectorStores.HNSWVectorStore.new(OpenAIEmbeddings)
+
+vector_store = HNSWVectorStore.add_documents(vector_store, [document_1, document_2])
+```
+
+```elixir
+HNSWLib.Index.get_current_count(vector_store.index)
+vector_store.documents
+HNSWVectorStore.similarity_search(vector_store, "hello", 1)
+```
+
+<!-- livebook:{"offset":1769,"stamp":{"token":"XCP.wYaoWS2fk-aNiyaUEFzij4RDFGrtHCtm0E4fzQ6dkAjSGu6GOFMcDPajuuTm5gnxr7P3S9u2yn4FKLHD3bm5GEQGzKHDO62pu-ac4akmpFuLWlH3KElDPSk","version":2}} -->

@@ -15,34 +15,49 @@ In LangChain ingested documents are represented by `LangChain.Document`. Documen
 
 Once you have added documents to a vector store you can use the `similarity_search(query)` function provided by each vector store to search of documents that match your text query. The vector store will handle converting your text query into an embedding, searching the underlying vector index, and returning the documents that correspond to the found vectors.
 
-## Quickstart
+## Create Documents
 
 ```elixir
 Application.put_env(:langchain, :openai_key, System.fetch_env!("LB_OPENAI_API_KEY"))
 alias LangChain.Document
 
-document_1 = Document.new("Hello World!", %{ id: 1 })
-document_2 = Document.new("Foobar", %{ id: 2 })
+documents = [
+  Document.new("Hello World!", %{ id: 1 }),
+  Document.new("Foobar", %{ id: 2 })
+]
+
 ```
+
+## Store Documents
+
+Storing documents is actually comprised of three distinct steps. In many cases the modules in `LangChain.VectorStores` will handle these for you but it can be helpful to understand they exist. To store searchable documents we need to:
+
+1. Convert the documents to embeddings. This requires a call to an embedding model.
+2. Store the embeddings. These are stored in a vector store/db.
+3. Store the original documents. These may or may not be stored in the same db as the embeddings.
+
+In our case we are going to use `LangChainVectorStores.PGVector.add_documents()`. That single call will handle converting our documents to embeddings, via the OpenAIAPI, and storing the embeddings and documents in Postgres.
 
 ```elixir
 alias LangChain.VectorStores.PGVector
 
-alias LangChain.VectorStores.HNSWVectorStore
-alias LangChain.Embeddings.OpenAIEmbeddings
+# alias LangChain.VectorStores.HNSWVectorStore
+# alias LangChain.Embeddings.OpenAIEmbeddings
 # vector_store = LangChain.VectorStores.HNSWVectorStore.new(OpenAIEmbeddings)
 
-# vector_store = HNSWVectorStore.add_documents(vector_store, [document_1, document_2])
+# vector_store = HNSWVectorStore.add_documents(vector_store, documents)
 
-{:ok, vector_store} = PGVector.new(conn_opts: [host: "localhost", port: 5432, database: "vector_test", username: "raulchedrese", password: ""])
-pgvector.add_documents(vector_store, [document_1, document_2])
+{:ok, vector_store} = PGVector.new()
+PGVector.add_documents(vector_store, documents)
 ```
+
+## Search Documents
 
 ```elixir
-# hnswlib.index.get_current_count(vector_store.index)
+# HNSWLib.Index.get_current_count(vector_store.index)
 # vector_store.documents
-# hnswvectorstore.similarity_search(vector_store, "hello", 1)
-pgvector.similarity_search(vector_store, "hello", 1)
+# HNSWVectorStore.similarity_search(vector_store, "hello", 1)
+PGVector.similarity_search(vector_store, "hello", 1)
 ```
 
-<!-- livebook:{"offset":1972,"stamp":{"token":"xcp.nsu6tyhwq4ymv4_x7blh55ntklt3rtwpntzr_rqx4psjv_cwrukluodjsabpjvzkxqr5asseegh2mg6t8a5gjy6xn8gmytbgdmarpov-zdrjn3wnl5ehgwc","version":2}} -->
+<!-- livebook:{"offset":2697,"stamp":{"token":"XCP.wqWlo6Y8IbW2qxAQFthmISC2v9qF6yrkjsBXnhkDiu3J9aL6k1RpENMxwoeoxAhBXpF9r__kFF20XUFPC378Ryg1Fl22igAuZ-xqjAdVj8wj8J8-B56kPDs","version":2}} -->

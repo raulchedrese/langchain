@@ -4,12 +4,18 @@ defmodule LangChain.Embeddings.OpenAIEmbeddings do
   """
   alias LangChain.Config
 
+  @dim 1536
+
   def embed_documents(documents) do
-    Nx.tensor(Enum.map(documents, fn doc -> call_openai_api(doc.content) end))
+    Enum.map(documents, fn doc -> call_openai_api(doc.content) end)
   end
 
   def embed_query(query) do
-    Nx.tensor(call_openai_api(query))
+    call_openai_api(query)
+  end
+
+  def dimension() do
+    @dim
   end
 
   defp call_openai_api(document) do

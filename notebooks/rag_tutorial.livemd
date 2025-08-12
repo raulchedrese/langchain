@@ -26,17 +26,23 @@ document_2 = Document.new("Foobar", %{ id: 2 })
 ```
 
 ```elixir
+alias LangChain.VectorStores.PGVector
+
 alias LangChain.VectorStores.HNSWVectorStore
 alias LangChain.Embeddings.OpenAIEmbeddings
-vector_store = LangChain.VectorStores.HNSWVectorStore.new(OpenAIEmbeddings)
+# vector_store = LangChain.VectorStores.HNSWVectorStore.new(OpenAIEmbeddings)
 
-vector_store = HNSWVectorStore.add_documents(vector_store, [document_1, document_2])
+# vector_store = HNSWVectorStore.add_documents(vector_store, [document_1, document_2])
+
+{:ok, vector_store} = PGVector.new(conn_opts: [host: "localhost", port: 5432, database: "vector_test", username: "raulchedrese", password: ""])
+pgvector.add_documents(vector_store, [document_1, document_2])
 ```
 
 ```elixir
-HNSWLib.Index.get_current_count(vector_store.index)
-vector_store.documents
-HNSWVectorStore.similarity_search(vector_store, "hello", 1)
+# hnswlib.index.get_current_count(vector_store.index)
+# vector_store.documents
+# hnswvectorstore.similarity_search(vector_store, "hello", 1)
+pgvector.similarity_search(vector_store, "hello", 1)
 ```
 
-<!-- livebook:{"offset":1769,"stamp":{"token":"XCP.wYaoWS2fk-aNiyaUEFzij4RDFGrtHCtm0E4fzQ6dkAjSGu6GOFMcDPajuuTm5gnxr7P3S9u2yn4FKLHD3bm5GEQGzKHDO62pu-ac4akmpFuLWlH3KElDPSk","version":2}} -->
+<!-- livebook:{"offset":1972,"stamp":{"token":"xcp.nsu6tyhwq4ymv4_x7blh55ntklt3rtwpntzr_rqx4psjv_cwrukluodjsabpjvzkxqr5asseegh2mg6t8a5gjy6xn8gmytbgdmarpov-zdrjn3wnl5ehgwc","version":2}} -->

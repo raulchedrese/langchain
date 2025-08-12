@@ -44,7 +44,9 @@ defmodule LangChain.MixProject do
       {:nx, ">= 0.7.0", optional: true},
       {:ex_doc, "~> 0.34", only: :dev, runtime: false},
       {:mimic, "~> 1.8", only: :test},
-      {:hnswlib, "~> 0.1.0"}
+      {:hnswlib, "~> 0.1.0"},
+      {:postgrex, "~> 0.21.1"},
+      {:pgvector, "~> 0.3.0"}
     ]
   end
 

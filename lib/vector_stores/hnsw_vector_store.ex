@@ -1,8 +1,8 @@
 defmodule LangChain.VectorStores.HNSWVectorStore do
-  alias LangChain.Embeddings.OpenAIEmbeddings
+  alias LangChain.EmbeddingModels.EmbeddingOpenAI
   defstruct [:index, :embeddings_model, :documents, :current_id]
 
-  def new(embeddings_model \\ OpenAIEmbeddings) do
+  def new(embeddings_model \\ EmbeddingOpenAI) do
     space = :l2
     max_elements = 10000
     {:ok, index} = HNSWLib.Index.new(space, embeddings_model.dimension(), max_elements)

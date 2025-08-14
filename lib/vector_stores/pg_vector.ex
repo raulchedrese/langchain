@@ -15,7 +15,9 @@ defmodule LangChain.VectorStores.PGVector do
     of floats (precomputed).
   """
 
-  alias LangChain.Embeddings.OpenAIEmbeddings
+  @behaviour LangChain.VectorStores.VectorStore
+
+  alias LangChain.EmbeddingModels.EmbeddingOpenAI
 
   @default_conn_opts [
     username: "postgres",
@@ -36,7 +38,7 @@ defmodule LangChain.VectorStores.PGVector do
   Options:
     - :conn_opts       - keyword list with Postgrex connection options (default provided)
     - :table           - table name as a string (default: "pgvector_documents")
-    - :embedding_model - module used to compute embeddings (default: LangChain.Embeddings.OpenAIEmbeddings)
+    - :embedding_model - module used to compute embeddings (default: LangChain.Embeddings.EmbeddingOpenAI)
 
   Persists the connection and config in persistent_term for subsequent calls.
   """
@@ -46,7 +48,7 @@ defmodule LangChain.VectorStores.PGVector do
       |> Keyword.put(:types, LangChain.VectorStores.PostgrexTypes)
 
     table = Keyword.get(opts, :table, @default_table)
-    embedding_model = Keyword.get(opts, :embedding_model, OpenAIEmbeddings)
+    embedding_model = Keyword.get(opts, :embedding_model, EmbeddingOpenAI)
 
     Postgrex.Types.define(LangChain.VectorStores.PostgrexTypes, Pgvector.extensions(), [])
 
@@ -62,7 +64,7 @@ defmodule LangChain.VectorStores.PGVector do
          :ok <- put_config(config) do
       {:ok, config}
     else
-      {:error, reason} = err ->
+      {:error, _reason} = err ->
         err
 
       other ->

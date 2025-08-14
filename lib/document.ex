@@ -1,7 +1,7 @@
 defmodule LangChain.Document do
-  defstruct [:content, :metadata]
+  defstruct [:title, :content, :metadata]
 
-  def new(content, metadata \\ %{}) do
-    %__MODULE__{content: content, metadata: metadata}
+  def new(title, content, metadata \\ %{}) do
+    %__MODULE__{title: title, content: content, metadata: metadata}
   end
 end
